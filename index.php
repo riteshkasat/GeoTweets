@@ -19,19 +19,19 @@
 
 <?php
 
-// 连接到mongodb
+// connected to mongodb
 $m = new MongoClient();
 
-// 选择一个数据库
+// select a database
 $db = $m->test;
 
-// 选择一个集合
+// select a collection
 $collection = $db->Domain;
 
-// 查询文档，确定后台已计算出关键词
+// 鏌ヨ鏂囨。锛岀‘瀹氬悗鍙板凡璁＄畻鍑哄叧閿瘝
 $amount = $collection->count(array('domain' => 'Culture'));
 
-if($amount == 0)//若还未计算出，则调用脚本
+if($amount == 0)//if you have not yet calculated, then call the script
 {
     $status = exec('python E:\PythonProject\Twitter\Test\GetKeywords.py');
     if($status == 'finished')
@@ -39,14 +39,14 @@ if($amount == 0)//若还未计算出，则调用脚本
         exec('python E:\PythonProject\Twitter\Test\AcquireTwitters.py');
     }
 }
-else//后台已经计算出关键词
+else//Keywords background has been calculated
 {
 
 }
 
 $domain = "";
 
-if($_SERVER['REQUEST_METHOD'] == 'POST')//若提交了请求
+if($_SERVER['REQUEST_METHOD'] == 'POST')//If you submitted a request
 {
     $domain = $_POST['domains'];
 
@@ -70,7 +70,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')//若提交了请求
                 'importance' => $document['importance']));
     }
 
-    $jsonData = json_encode($arr);//转换成json数据
+    $jsonData = json_encode($arr);//Converted into json data
     echo $jsonData;
 
     /*echo '{"type":"FeatureCollection","id":"tweetsyoulike.c22ab257","features":[';
@@ -88,18 +88,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')//若提交了请求
                 'media' => $document['media_url'], 'marker-size' => 'medium',
                 'marker-color' => '#7ec9b1', 'marker-symbol' => '3',
                 'importance' => $document['importance']));
-        $jsonData = json_encode($arr);//转换成json数据
+        $jsonData = json_encode($arr);//杞崲鎴恓son鏁版嵁
         echo $jsonData;
         if($cursor->hasNext())
             echo ',';
     }
     echo ']}';*/
 
-    //查数据库，检查twitter的importance中是否包含domain，若有，结果存在返回数组中，排序后可用来显示
-    //若没有，调用python脚本来获取twitter，插入数据库。从数据库中获取所有twitter，计算对domain的keywords的importance，完成后返回给php
-    //ok，然后php再从数据库中查。
-    exec('python E:\PythonProject\Twitter\Test\TextMining.py Culture');//执行，不输出返回值，保留结果
-    //system('python E:\PythonProject\Twitter\Test\TextMining.py Culture');//执行，输出返回值，保留结果
+    // Search databases, check whether the twitter of importance included domain, if so, the result in the returned array , can be used to display sorted
+    // If not, call the python script to get twitter, inserted into the database . Get all twitter from the database , calculates the domain of the keywords of importance, after the completion of return to php
+    // ok, then php then check from the database.
+    exec('python E:\PythonProject\Twitter\Test\TextMining.py Culture');//鎵ц锛屼笉杈撳嚭杩斿洖鍊硷紝淇濈暀缁撴灉
+    //system('python E:\PythonProject\Twitter\Test\TextMining.py Culture');//鎵ц锛岃緭鍑鸿繑鍥炲�硷紝淇濈暀缁撴灉
 
 }
 
